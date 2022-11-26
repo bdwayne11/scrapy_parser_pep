@@ -9,7 +9,8 @@ class PepSpider(scrapy.Spider):
     start_urls = ['https://peps.python.org/']
 
     def parse(self, response):
-        trs = response.css('section[id=numerical-index]').css('tbody').css('tr')
+        trs = response.css('section[id=numerical-index]').css(
+            'tbody').css('tr')
         for tr in trs:
             pep_link = tr.css('a').attrib['href']
             yield response.follow(pep_link, self.parse_pep)
@@ -23,4 +24,3 @@ class PepSpider(scrapy.Spider):
             'status': response.css('dt:contains("Status") + dd::text').get()
         }
         yield PepParseItem(data)
-
