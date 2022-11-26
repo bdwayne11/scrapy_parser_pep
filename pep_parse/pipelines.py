@@ -1,3 +1,5 @@
+import csv
+
 from collections import defaultdict
 
 from .settings import BASE_DIR, NOW
@@ -20,7 +22,9 @@ class PepParsePipeline:
     def close_spider(self, spider):
         with open(self.results_dir / self.filename,
                   mode='w', encoding='utf-8') as f:
-            f.write('Статус,Количество\n')
-            for key, item in self.status_count.items():
-                f.write(f'{key}, {str(item)}\n')
-            f.write(f'Total,{sum(self.status_count.values())}\n')
+            csv.writer(f, dialect=csv.unix_dialect,
+                       quoting=csv.QUOTE_NONE).writerows(
+                [['Статус', 'Количество'],
+                 *(self.status_count.items()),
+                 ['Total', sum(self.status_count.values())]
+                 ])
